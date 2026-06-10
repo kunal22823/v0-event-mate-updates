@@ -19,6 +19,7 @@ import MemberBrowseEvents from './pages/member/BrowseEvents'
 import ParticipatedEvents from './pages/member/ParticipatedEvents'
 import MemberProfile from './pages/member/Profile'
 import AddEvent from './pages/member/AddEvent'
+import EditEvent from './pages/member/EditEvent'
 import MemberMyEvents from './pages/member/MemberMyEvents'
 import EventDetail from './pages/member/EventDetail'
 import ExportData from './pages/member/ExportData'
@@ -60,6 +61,7 @@ export default function App() {
           <Route path="/member/add-event" element={<AddEvent />} requireApproved={true} />
           <Route path="/member/my-events" element={<MemberMyEvents />} requireApproved={true} />
           <Route path="/member/events/:id" element={<EventDetail />} />
+          <Route path="/member/events/:id/edit" element={<EditEvent />} />
           <Route path="/member/export" element={<ExportData />} requireApproved={true} />
         </Route>
       </Route>

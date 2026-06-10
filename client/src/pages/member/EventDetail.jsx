@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import apiClient from '../../api/client'
 import AttendanceTable from '../../components/AttendanceTable'
 import StatsCard from '../../components/StatsCard'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Calendar, MapPin, Users, CheckCircle, XCircle, Award, Building2 } from 'lucide-react'
+import { ArrowLeft, Calendar, MapPin, Users, CheckCircle, XCircle, Award, Building2, Edit2, Trash2 } from 'lucide-react'
 
 export default function EventDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const [event, setEvent] = useState(null)
   const [registrations, setRegistrations] = useState([])
   const [loading, setLoading] = useState(true)
   const [markingAttendance, setMarkingAttendance] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +51,22 @@ export default function EventDetail() {
       setMarkingAttendance(false)
     }
   }
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this event? All registrations will be removed.')) return
+
+    setDeleting(true)
+    try {
+      await apiClient.delete(`/events/${id}`)
+      toast.success('Event deleted successfully.')
+      navigate('/member/my-events')
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete event.')
+      setDeleting(false)
+    }
+  }
+
+  const isEventCreator = event && user && event.createdBy?._id === user.id
 
   if (loading) return <LoadingSpinner />
 
@@ -89,7 +109,28 @@ export default function EventDetail() {
           />
         )}
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-slate-900 mb-3">{event.title}</h1>
+          <div className="flex items-start justify-between gap-4 mb-3">
+            <h1 className="text-2xl font-bold text-slate-900">{event.title}</h1>
+            {isEventCreator && (
+              <div className="flex gap-2">
+                <Link
+                  to={`/member/events/${id}/edit`}
+                  className="p-2 text-primary-600 hover:bg-primary-100 rounded-lg transition-colors"
+                  title="Edit event"
+                >
+                  <Edit2 size={18} />
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
+                  title="Delete event"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            )}
+          </div>
           <p className="text-slate-600 leading-relaxed mb-4">{event.description}</p>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-600">

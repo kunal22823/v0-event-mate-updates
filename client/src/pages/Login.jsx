@@ -14,32 +14,28 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-  e.preventDefault()
+    e.preventDefault()
 
-  console.log("FORM SUBMITTED")
+    setLoading(true)
 
-  setLoading(true)
+    try {
+      const user = await login(email, password)
 
-  try {
-    const user = await login(email, password)
+      toast.success(`Welcome back, ${user.name}!`)
 
-    toast.success(`Welcome back, ${user.name}!`)
+      const dashboardMap = {
+        student: "/student",
+        member: "/member",
+        superadmin: "/admin",
+      }
 
-    const dashboardMap = {
-      student: "/student",
-      member: "/member",
-      superadmin: "/admin",
+      navigate(dashboardMap[user.role] || "/")
+    } catch (error) {
+      toast.error(error.message || "Login failed. Please try again.")
+    } finally {
+      setLoading(false)
     }
-
-    navigate(dashboardMap[user.role] || "/")
-  } catch (error) {
-  console.log("LOGIN ERROR:", error.message)
-
-  toast.error(error.message)
-} finally {
-    setLoading(false)
   }
-}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">

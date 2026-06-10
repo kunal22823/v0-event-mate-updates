@@ -4,7 +4,7 @@ import apiClient from '../../api/client'
 import EventCard from '../../components/EventCard'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import toast from 'react-hot-toast'
-import { PlusCircle, Trash2, Eye, Users } from 'lucide-react'
+import { PlusCircle, Trash2, Eye, Users, Edit2 } from 'lucide-react'
 
 export default function MemberMyEvents() {
   const [events, setEvents] = useState([])
@@ -84,10 +84,18 @@ export default function MemberMyEvents() {
                     >
                       <Eye size={14} /> View
                     </Link>
+                    <Link
+                      to={`/member/events/${event._id}/edit`}
+                      className="btn-secondary flex items-center justify-center gap-1.5 text-sm px-3"
+                      title="Edit event"
+                    >
+                      <Edit2 size={14} />
+                    </Link>
                     <button
                       onClick={() => handleDelete(event._id)}
                       disabled={deleting === event._id}
                       className="btn-danger flex items-center justify-center gap-1.5 text-sm px-3"
+                      title="Delete event"
                     >
                       <Trash2 size={14} />
                     </button>
