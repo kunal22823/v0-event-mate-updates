@@ -26,16 +26,41 @@ export function AuthProvider({ children }) {
     loadUser()
   }, [token])
 
-  const login = async (email, password) => {
-    const res = await apiClient.post('/auth/login', { email, password })
+  // const login = async (email, password) => {
+  //   const res = await apiClient.post('/auth/login', { email, password })
+  //   const { token: newToken, user: newUser } = res.data
+  //   localStorage.setItem('eventmate_token', newToken)
+  //   localStorage.setItem('eventmate_user', JSON.stringify(newUser))
+  //   setToken(newToken)
+  //   setUser(newUser)
+  //   return newUser
+  // }
+const login = async (email, password) => {
+  try {
+    const res = await apiClient.post('/auth/login', {
+      email,
+      password,
+    })
+
+    console.log("LOGIN RESPONSE:", res.data)
+
     const { token: newToken, user: newUser } = res.data
+
     localStorage.setItem('eventmate_token', newToken)
     localStorage.setItem('eventmate_user', JSON.stringify(newUser))
+
     setToken(newToken)
     setUser(newUser)
-    return newUser
-  }
 
+    return newUser
+  } catch (error) {
+  console.log("AUTH LOGIN ERROR:", error.response?.data)
+
+  throw new Error(
+    error?.response?.data?.message || "Invalid email or password"
+  )
+}
+}
   const register = async (userData) => {
     const res = await apiClient.post('/auth/register', userData)
     const { token: newToken, user: newUser } = res.data
